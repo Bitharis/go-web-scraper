@@ -6,18 +6,17 @@ import (
 	"github.com/gocolly/colly"
 )
 
+var customMiner IMiner
+
 func requestHandler(request *colly.Request) {
-	request.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
-	request.Headers.Add("Accept-Encoding", "gzip, deflate, br")
-	request.Headers.Add("Accept-Language", "en-US,en;q=0.5")
-	request.Headers.Add("Connection", "keep-alive")
-	request.Headers.Add("Sec-Fetch-Dest", "document")
-	request.Headers.Add("Sec-Fetch-Mode", "navigate")
-	request.Headers.Add("Sec-Fetch-Site", "none")
-	request.Headers.Add("Sec-Fetch-User", "?1")
-	request.Headers.Add("Upgrade-Insecure-Requests", "1")
+
+	// Set the headers for each miner
+	for key, value := range customMiner.GetRequestHeaders() {
+		request.Headers.Add(key, value)
+	}
+
+	// Set Browser
 	request.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0")
-	fmt.Println("Visiting", request.URL)
 }
 func responseHandler(response *colly.Response) { fmt.Println("Got", response.Request.URL) }
 
@@ -30,20 +29,23 @@ type DataMiner struct {
 	collector              colly.Collector
 }
 
-func SetupDataminer(m IMiner) *DataMiner {
+func SetupDataminer(miner IMiner) *DataMiner {
+	customMiner = miner
 	collector := colly.NewCollector()
 	collector.OnRequest(requestHandler)
 	collector.OnResponse(responseHandler)
 	collector.OnError(errorHandler)
+	
 	return &DataMiner{
-		rootUrl:                m.GetTargetUrl(),
-		selector:               m.GetTargetRootHtmlElement(),
-		onSelectorFoundHandler: m.OnTargetFound,
+		rootUrl:                customMiner.GetTargetUrl(),
+		selector:               customMiner.GetTargetRootHtmlElement(),
+		onSelectorFoundHandler: customMiner.OnTargetFound,
 		collector:              *collector,
 	}
 }
 
 func (dataminer *DataMiner) MineData() {
+	fmt.Println("Visiting", dataminer.rootUrl)
 	dataminer.collector.OnHTML(dataminer.selector, dataminer.onSelectorFoundHandler)
 	dataminer.collector.Visit(dataminer.rootUrl)
 }

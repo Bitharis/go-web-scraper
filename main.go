@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	m := miners.NetOnNetLaptopMiner{}
+	m := miners.IcaPrototypeMiner{}
 	dataminer := miners.SetupDataminer(&m)
 	dataminer.MineData()
 	data, error := m.GetMinedData()
@@ -18,7 +18,7 @@ func main() {
 	fmt.Println(data.MinedOnDateTime)
 	fmt.Println(data.Source)
 	for _, product := range data.Products {
-		fmt.Println("ID", product.TrackingId, "Brand", product.Brand, "Name", product.Name, "Price", product.Price)
+		fmt.Println(product.Name, "Price", product.Price)
 
 	}
 }

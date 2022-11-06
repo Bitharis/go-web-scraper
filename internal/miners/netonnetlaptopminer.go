@@ -96,3 +96,17 @@ func (*NetOnNetLaptopMiner) GetMinedData() (*Data, error) {
 
 	return &minedData, nil
 }
+
+func (*NetOnNetLaptopMiner) GetRequestHeaders() (h map[string]string) {
+	headers := make(map[string]string)
+	headers["Accept"]="text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+	headers["Accept-Encoding"]="gzip, deflate, br"
+	headers["Accept-Language"]="en-US,en;q=0.5"
+	headers["Connection"]="keep-alive"
+	headers["Sec-Fetch-Dest"]="document"
+	headers["Sec-Fetch-Mode"]="navigate"
+	headers["Sec-Fetch-Site"]="none"
+	headers["Sec-Fetch-User"]="?1"
+	headers["Upgrade-Insecure-Requests"]="1"
+	return headers
+}

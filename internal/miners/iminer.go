@@ -9,4 +9,5 @@ type IMiner interface {
 	GetTargetUrl() string
 	GetTargetRootHtmlElement() string
 	GetMinedData() (*Data, error)
+	GetRequestHeaders() (headers map[string]string)
 }
